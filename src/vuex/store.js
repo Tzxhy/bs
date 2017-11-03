@@ -10,10 +10,12 @@ Vue.use(Vuex)
 const state = {
   count: 10,
   singlePointToSinglePoint: {
-    startPoint: '',
-    endPoint: '',
-    delay: '',
-    power: ''
+    startPoint: '0,0',
+    endPoint: '3,3',
+    delay: '1nS',
+    power: '0mW',
+    playTime: 1,
+    routeAlgorithm: 'XY-Route'
   }
 }
 

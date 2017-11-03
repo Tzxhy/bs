@@ -22,6 +22,7 @@ var webpackConfig = merge(baseWebpackConfig, {
   output: {
     path: config.build.assetsRoot,
     filename: utils.assetsPath('js/[name].[chunkhash].js'),
+    publicPath: '/',// 切记publicPath要设置为绝对路径，以/开头，否则字体文件路径全部错误！！！
     chunkFilename: utils.assetsPath('js/[id].[chunkhash].js')
   },
   plugins: [

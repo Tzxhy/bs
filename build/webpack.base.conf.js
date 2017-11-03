@@ -15,6 +15,7 @@ module.exports = {
   output: {
     path: config.build.assetsRoot,
     filename: '[name].js',
+    chunkFilename: '[name].js',
     publicPath: process.env.NODE_ENV === 'production'
       ? config.build.assetsPublicPath
       : config.dev.assetsPublicPath
@@ -24,7 +25,9 @@ module.exports = {
     alias: {
       'vue$': 'vue/dist/vue.esm.js',
       '@': resolve('src'),
-      'scss_vars': '@/styles/vars.scss'
+      'scss_vars': '@/styles/vars.scss',
+      fabric$: path.resolve(__dirname, '../static/fabric.exec.js'),
+      nocRoute$: path.resolve(__dirname, '../src/common/js/nocRoute.js'),
     }
   },
   module: {

@@ -42,7 +42,11 @@ function startDrawNoC(id) {
 				rx: 10,
 				ry: 10,
 			});
-			var text = new fabric.Text('PU'+(i*4+j), { left: 50 + j * 110, top: 70 + i * 110,fontSize: 26 });
+			var text = new fabric.Text('PU' + (i * 4 + j), {
+				left: 50 + j * 110,
+				top: 70 + i * 110,
+				fontSize: 26
+			});
 			nowCircleArr[j] = new fabric.Circle({
 				left: 120 + j * 110,
 				top: 30 + i * 110,
@@ -75,43 +79,50 @@ function startDrawNoC(id) {
 	return canvas;
 }
 
-function stsRoute(arrParam,canvas) {
+function stsRoute(arrParam, canvas) {
 	var dataChunk = new fabric.Rect({
-		left: 100 +110 * arrParam[0],
-		top: 60 +110 * arrParam[1],
+		left: 100 + 110 * arrParam[0],
+		top: 60 + 110 * arrParam[1],
 		fill: '#ff0000',
 		width: 10,
 		height: 10
 	});
 	canvas.add(dataChunk);
-	
-	var resultRoute = transformData(findTheWay(arrParam));//[]
-	console.log(resultRoute);
+
+	window.resultRoute = transformData(findTheWay(arrParam)); //[]
 	// outFromPU(dataChunk, canvas);
-	
+
 	var animationPromise = new Promise(function(fulfill, reject) {
 		outFromPU(dataChunk, canvas);
-		setTimeout(function(){
+		setTimeout(function() {
 			fulfill();
 		}, 2000);
 	})
 	for (let i = 0; i < resultRoute.length; ++i) {
-		animationPromise = animationPromise.then(()=>{
+		animationPromise = animationPromise.then(() => {
 			return moveAnimate(dataChunk, resultRoute[i], canvas);
 		})
 	}
-	animationPromise.then(()=>{
-		intoPU(dataChunk,canvas)
+	return animationPromise.then(() => {
+		return intoPU(dataChunk, canvas);//操作为异步，需先完成时，记得添加return，否则异步失效
 	})
 }
 
 function transformData(arr) {
-	return arr.map(function(value, index){
-		switch(value){
-			case '+x': return 'right'; break;
-			case '+y': return 'down'; break;
-			case '-x': return 'left'; break;
-			case '-y': return 'up'; break;
+	return arr.map(function(value, index) {
+		switch (value) {
+			case '+x':
+				return 'right';
+				break;
+			case '+y':
+				return 'down';
+				break;
+			case '-x':
+				return 'left';
+				break;
+			case '-y':
+				return 'up';
+				break;
 		}
 	})
 }
@@ -120,36 +131,36 @@ function findTheWay(param) {
 	var nowPoint = {
 		x: param[0],
 		y: param[1]
-	} ;
+	};
 	var desPoint = {
 		x: param[2],
 		y: param[3]
 	};
 
 	var result = [];
-	for (var i = 0; i < 3; ++i ) {	//进行X方向移动
+	for (var i = 0; i < 3; ++i) { //进行X方向移动
 		if (_.isEqual(nowPoint, desPoint)) {
-	 		return result; 
-		}else if (nowPoint.x === desPoint.x) {
+			return result;
+		} else if (nowPoint.x === desPoint.x) {
 			break;
 		} else {
-			if(nowPoint.x > desPoint.x) {
+			if (nowPoint.x > desPoint.x) {
 				--nowPoint.x;
 				result.push('-x');
-			}else {
+			} else {
 				++nowPoint.x;
 				result.push('+x');
 			}
 		}
 	}
-	for (var i = 0; i < 3; ++i ) {	//进行Y方向移动
+	for (var i = 0; i < 3; ++i) { //进行Y方向移动
 		if (_.isEqual(nowPoint, desPoint)) {
-	 		return result; 
+			return result;
 		} else {
-			if(nowPoint.y > desPoint.y) {
+			if (nowPoint.y > desPoint.y) {
 				--nowPoint.y;
 				result.push('-y');
-			}else {
+			} else {
 				++nowPoint.y;
 				result.push('+y');
 			}
@@ -159,13 +170,13 @@ function findTheWay(param) {
 	return result;
 }
 
-function moveAnimate(fabricObj, direction, canvas){
-	console.log('called at '+ new Date() + ' direction is '+ direction);
+function moveAnimate(fabricObj, direction, canvas) {
+	console.log('called at ' + new Date() + ' direction is ' + direction);
 	var funStr = '-=110';
 	var isPositive = false; // 是否是正向（下右）
 	if (direction === 'right' || direction === 'down') {
 		funStr = '+=110';
-	} 
+	}
 
 	if (direction === 'left' || direction === 'right') {
 		direction = 'left';
@@ -174,9 +185,9 @@ function moveAnimate(fabricObj, direction, canvas){
 	}
 	return new Promise((fulfill, reject) => {
 		fabricObj.animate(direction, funStr, {
-			onChange:canvas.renderAll.bind(canvas),
-			duration:2000,
-			easing:fabric.util.linear,
+			onChange: canvas.renderAll.bind(canvas),
+			duration: 2000,
+			easing: fabric.util.linear,
 			onComplete: fulfill
 		})
 	})
@@ -187,23 +198,31 @@ function outFromPU(fabricObj, canvas) {
 		left: '+=30',
 		top: '-=20'
 	}, {
-		onChange:canvas.renderAll.bind(canvas),
-		duration:2000,
+		onChange: canvas.renderAll.bind(canvas),
+		duration: 2000,
 
 	})
 }
+
 function intoPU(fabricObj, canvas) {
-	fabricObj.animate({
-		left: '-=30',
-		top: '+=20',
-		opacity: 0
-	}, {
-		onChange:canvas.renderAll.bind(canvas),
-		duration:2000,
-		onComplete: ()=>{canvas.remove(fabricObj)}
+	return new Promise((fulfill, reject) => {
+		fabricObj.animate({
+			left: '-=30',
+			top: '+=20',
+			opacity: 0
+		}, {
+			onChange: canvas.renderAll.bind(canvas),
+			duration: 2000,
+			onComplete: () => {
+				canvas.remove(fabricObj);
+				fulfill();
+			}
+		})
 	})
 }
 
 
-export {startDrawNoC, stsRoute};
-
+export {
+	startDrawNoC,
+	stsRoute
+};
