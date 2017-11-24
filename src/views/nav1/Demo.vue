@@ -54,7 +54,7 @@
 				let self = this;
 				this.routeLine = [...params.startPoint.split(',').map(function(value){return Number(value)}), ...params.endPoint.split(',').map(function(value){return Number(value)})];
 				self.disableStartRouteBtn = true;
-				self.playState = '正在播放';				
+				self.playState = '正在播放';
 				
 				stsRoute(this.routeLine,this.canvas).then(()=>{
 					self.disableStartRouteBtn = false;

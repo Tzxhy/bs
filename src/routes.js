@@ -31,6 +31,18 @@ let routes = [
             // { path: '/user', component: user, name: '列表' },
         ]
     },
+    {
+        path: '/',
+        component: Home,
+        name: '一对多路由',
+        iconCls: 'el-icon-message',//图标样式class
+        children: [
+            
+            { path: '/one-to-multipot-communication-config', component: Config1, name: '配置' },
+            { path: '/animation-demo', component: Demo, name: '动画演示' },
+            // { path: '/user', component: user, name: '列表' },
+        ]
+    },
     // {
     //     path: '/',
     //     component: Home,
